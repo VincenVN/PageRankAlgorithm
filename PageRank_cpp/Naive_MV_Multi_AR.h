@@ -21,35 +21,72 @@ struct AR_TM
     string Network_name;
 };
 
+// Partition function for QuickSort
+int partition(AR_TM &S, int low, int high) {
+    int pivot_row = S.row[low];
+    int pivot_col = S.col[low];
+    int i = low + 1;
+    int j = high;
+
+    while (i <= j) {
+        while (i <= j && (S.row[i] < pivot_row || (S.row[i] == pivot_row && S.col[i] < pivot_col))) {
+            i++;
+        }
+
+        while (i <= j && (S.row[j] > pivot_row || (S.row[j] == pivot_row && S.col[j] > pivot_col))) {
+            j--;
+        }
+
+        if (i < j) {
+            swap(S.row[i], S.row[j]);
+            swap(S.col[i], S.col[j]);
+            i++;
+            j--;
+        }
+    }
+
+    swap(S.row[low], S.row[j]);
+    swap(S.col[low], S.col[j]);
+
+    return j;
+}
+
+// QuickSort function for sorting AR_TM
+void quickSort(AR_TM &S, int low, int high) {
+    if (low < high) {
+        int pivot = partition(S, low, high);
+        quickSort(S, low, pivot - 1);
+        quickSort(S, pivot + 1, high);
+    }
+}
+
+// Sort the Array Representation format Dataset with QuickSort function
 AR_TM Sort_AR_TM(AR_TM S){
+    int low = 0;
+    int high = S.Edge_num - 1;
+    quickSort(S, low, high);
+    return S;
+}
+
+// Sort the Array Representation format Dataset with Bubble Sort function
+AR_TM Sort_AR_TM_Bubble(AR_TM S){
     bool update = true;
     int L = 0;
     while (update && L < S.Edge_num * S.Edge_num){
         update = false;
-        vector<int> ::iterator row_k = S.row.begin();
-        vector<int> ::iterator col_k = S.col.begin();
         for(int k=0; k<(S.Edge_num-1); k++){
-            if(((*row_k) > (*(row_k+1))) || (((*row_k) == (*(row_k+1))) && ((*col_k) > (*(col_k+1))))){
-                int Col_vals[2] = {0, 0};
-                int Row_vals[2] = {0, 0};
-                Col_vals[0] = *(col_k+1);
-                Col_vals[1] = *col_k;
-                Row_vals[0] = *(row_k+1);
-                Row_vals[1] = *row_k;
-                (*col_k) = Col_vals[0];
-                (*row_k) = Row_vals[0];
-                (*(col_k+1)) = Col_vals[1];
-                (*(row_k+1)) = Row_vals[1];
+            if((S.row[k] > S.row[k+1]) || ((S.row[k] == S.row[k+1]) && (S.col[k] > S.col[k+1]))){
+                swap(S.col[k], S.col[k+1]);
+                swap(S.row[k], S.row[k+1]);
                 update = true;
             }
-            col_k++;
-            row_k++;
         }
         L++;
     }
     return S;
 }
 
+// Naive Matrix Vector multiplication for the Transition matrix stored in Array Representation format.  
 vector<float> Naive_Matrix_Vector_Multi_AR_TM(AR_TM S, vector<float> v_0){
     vector<float> v_1(S.Node_num, 0);
     int *row_k = S.row.data();
@@ -68,7 +105,7 @@ vector<float> Naive_Matrix_Vector_Multi_AR_TM(AR_TM S, vector<float> v_0){
             i = (*row_k);
         }
         v_1_j += (*col_k - j);
-        (*v_1_j) = (*v_1_j) + (*v_0_i)/(*NZ_num_i);
+        (*v_1_j) = (*v_1_j) + (float)(*v_0_i)/(*NZ_num_i);
         j = (*col_k);
         row_k ++;
         col_k ++;

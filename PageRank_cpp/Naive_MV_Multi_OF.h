@@ -25,7 +25,7 @@ vector<float> Naive_Matrix_Vector_Multi_OF_TM(OF_TM S, vector<float> v_0){
         float *v_1_j = v_1.data();
         for(vector<bool> ::iterator A_ij = (*A_i).begin(); A_ij!=(*A_i).end(); A_ij++){
             if(*A_ij){
-                (*v_1_j) += ((*v_0_i)/(*S_NZ_num_i));
+                (*v_1_j) += (float)((*v_0_i)/(*S_NZ_num_i));
             }
             v_1_j++;
         }

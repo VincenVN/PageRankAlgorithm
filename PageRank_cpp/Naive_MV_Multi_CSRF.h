@@ -37,7 +37,7 @@ vector<float> Naive_Matrix_Vector_Multi_CSRF_TM(CSRF_TM S, vector<float> v_0){
         for(int l=0; l<r; l++){
             v_1_j += (*col_k - j);
             j = (*col_k);
-            *v_1_j += (*v_0_i)/r;
+            *v_1_j += (float)(*v_0_i)/r;
             col_k++;
         }
 
